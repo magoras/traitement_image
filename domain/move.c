@@ -30,6 +30,8 @@ process(int dx, int dy, char* ims_name, char* imd_name)
 
 
 pnm_save(dest, PnmRawPpm, imd_name);
+pnm_free(dest);
+pnm_free(source);
 }
 
 void

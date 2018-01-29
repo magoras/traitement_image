@@ -18,18 +18,51 @@ process(int dx, int dy, char* ims_name, char* imd_name)
   pnm source = pnm_load(ims_name);
   size_t cols = pnm_get_width(source);
   size_t rows = pnm_get_height(source);
+  int col  = (int)cols;
+  int row = (int)rows;
   pnm dest = pnm_new(cols, rows, PnmRawPpm);
 
-  for (int i = dy ; i < (int)rows + dy ; i++){
-    for (int j = dx ; j < (int)cols + dx ; j++){
-        for (int can = 0 ; can < 3 ; can ++){
-            setpix(i,j,dx,dy,source,can,dest,(int)rows,(int)cols);
+
+  if(dx>=0 && dy>=0){
+    for (int i = 0 ; i < dy ; i++){
+      for (int j = 0 ; j < dx ; j++){
+          for (int can = 0 ; can < 3 ; can ++){
+            //pnm_set_component(dest,i,j,can,pnm_get_component(source,rows-dy+i,cols-dx+j,can));
+            setpix(i,j,-col+dx,-row+dy,source,can,dest,row,col);
+          }
+        }
       }
-    }
-  }
+      for (int i = dy ; i < row + dy ; i++){
+        for (int j = dx ; j < col + dx ; j++){
+            for (int can = 0 ; can < 3 ; can ++){
+              setpix(i,j,dx,dy,source,can,dest,row,col);
+            }
+          }
+        }
+
+        for (int i = dy ; i < row ; i++){
+          for (int j = 0 ; j < dx ; j++){
+              for (int can = 0 ; can < 3 ; can ++){
+                setpix(i,j,-col+dx,0,source,can,dest,row,col);
+
+              }
+            }
+          }
+
+          for (int i = 0 ; i < dy ; i++){
+            for (int j = dx ; j < col  ; j++){
+                for (int can = 0 ; can < 3 ; can ++){
+                  setpix(i,j,0,-row+dy,source,can,dest,row,col);
+                }
+              }
+            }
+
+            
 
 
 pnm_save(dest, PnmRawPpm, imd_name);
+pnm_free(source);
+pnm_free(dest);
 }
 
 void
